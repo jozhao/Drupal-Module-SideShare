@@ -50,7 +50,7 @@ function sideshare_settings() {
 			'#type' => 'textfield',
 			'#title' => t('Twitter Username'),
 			'#size' => 60,
-			'#default_value' => variable_get('sideshare_twitter_username', 'decarbonise'),
+			'#default_value' => variable_get('sideshare_twitter_username', ''),
 	);
 
 	return system_settings_form($form);
