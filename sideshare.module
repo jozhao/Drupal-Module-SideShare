@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * @file
+ * Various module information.
+ */
+
+/**
+ * Implements hook_menu().
+ *
+ * @return array @ingroup hooks
+ *         @ingroup menu
+ */
+function sideshare_menu() {
+  // Administration pages.
+  $items['admin/config/user-interface/sideshare'] = array(
+      'title' => 'SideShare',
+      'description' => 'Configure SideShare Widget',
+      'position' => 'left',
+      'page callback' => 'sideshare_admin_menu_block_page',
+      'access arguments' => array(
+          'access sideshare administer'
+      ),
+      'file' => 'includes/sideshare.admin.inc'
+  );
+  $items['admin/config/user-interface/sideshare/settings'] = array(
+      'title' => 'Configure SideShare',
+      'description' => 'Configure SideShare Widget',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          'sideshare_settings'
+      ),
+      'access callback' => 'user_access',
+      'access arguments' => array(
+          'access sideshare administer'
+      ),
+      'type' => MENU_NORMAL_ITEM,
+      'file' => 'includes/sideshare.admin.inc',
+      'weight' => - 10
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function sideshare_permission() {
+  $perms = array(
+      'access sideshare administer' => array(
+          'title' => t('Administer SideShare'),
+          'restrict access' => TRUE
+      )
+  );
+  return $perms;
+}
+
+/**
+ * Implements hook_init().
+ */
+function sideshare_init() {
+  // Only load the assets while not in admin page.
+  if (_pageAllow()) {
+    drupal_add_css(drupal_get_path('module', 'sideshare') . '/css/sideshare.css');
+    drupal_add_js(drupal_get_path('module', 'sideshare') . '/js/sideshare.js');
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+// function sideshare_theme() {
+//
+// }
+
+/**
+ * Implements hook_process().
+ */
+function sideshare_preprocess_region(&$variables) {
+  // Only load the assets while not in admin page.
+  if (!_pageAllow()) {
+    return;
+  }
+  // Choose the region.
+  if ($variables['region'] == 'footer') {
+  	$embed_SideShare = '<div id="sideshare-floating-bar"></div>';
+  	$variables['content'] = $variables['content'] . $embed_SideShare;
+  }
+}
+
+/**
+ * Helper return only if current page is for display.
+ */
+function _pageAllow() {
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    // Only display widget with content type allowed.
+    $node = menu_get_object();
+    $node_type = $node->type;
+    $ct = variable_get('sideshare_posts_' . $node_type . '_enabled', FALSE);
+    if (!$ct) {
+    	return false;
+    }
+    return true;
+  }
+  else {
+    return false;
+  }
+}

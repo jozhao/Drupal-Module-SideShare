@@ -1,0 +1,3 @@
+name = SideShare
+description = "Provides a sidebar for social media sharing icons."
+core = 7.x
