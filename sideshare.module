@@ -12,23 +12,40 @@
  *         @ingroup menu
  */
 function sideshare_menu() {
+  $items = array();
   // Administration pages.
-  $items['admin/config/user-interface/sideshare'] = array(
+  $items['admin/config/sideshare'] = array(
       'title' => 'SideShare',
       'description' => 'Configure SideShare Widget',
       'position' => 'left',
-      'page callback' => 'sideshare_admin_menu_block_page',
+      'page callback' => '_sideshare_admin_menu_block_page',
       'access arguments' => array(
-          'access sideshare administer'
+          'access sideshare administer',
       ),
-      'file' => 'includes/sideshare.admin.inc'
+      'file' => 'includes/sideshare.admin.inc',
+      'weight' => 0,
   );
-  $items['admin/config/user-interface/sideshare/settings'] = array(
+  $items['admin/config/sideshare/settings'] = array(
       'title' => 'Configure SideShare',
       'description' => 'Configure SideShare Widget',
       'page callback' => 'drupal_get_form',
       'page arguments' => array(
-          'sideshare_settings'
+          '_sideshare_settings',
+      ),
+      'access callback' => 'user_access',
+      'access arguments' => array(
+          'access sideshare administer',
+      ),
+      'type' => MENU_NORMAL_ITEM,
+      'file' => 'includes/sideshare.admin.inc',
+      'weight' => - 10,
+  );
+  $items['admin/config/sideshare/buttons'] = array(
+      'title' => 'Buttons management',
+      'description' => 'Share Buttons management',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          '_sideshare_button_management',
       ),
       'access callback' => 'user_access',
       'access arguments' => array(
@@ -36,7 +53,46 @@ function sideshare_menu() {
       ),
       'type' => MENU_NORMAL_ITEM,
       'file' => 'includes/sideshare.admin.inc',
-      'weight' => - 10
+      'weight' => - 10,
+  );
+  $items['admin/config/sideshare/buttons/add'] = array(
+      'title' => 'Add New Button',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          '_sideshare_button_add',
+      ),
+      'access callback' => 'user_access',
+      'access arguments' => array(
+          'access sideshare administer'
+      ),
+      'type' => MENU_CALLBACK,
+      'file' => 'includes/sideshare.admin.inc',
+  );
+  $items['admin/config/sideshare/buttons/edit'] = array(
+      'title' => 'Edit Button',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          '_sideshare_button_edit',
+      ),
+      'access callback' => 'user_access',
+      'access arguments' => array(
+          'access sideshare administer',
+      ),
+      'type' => MENU_CALLBACK,
+      'file' => 'includes/sideshare.admin.inc',
+  );
+  $items['admin/config/sideshare/buttons/del'] = array(
+      'title' => 'Delete Button',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array(
+          '_sideshare_button_confirm_delete',
+      ),
+      'access callback' => 'user_access',
+      'access arguments' => array(
+          'access sideshare administer',
+      ),
+      'type' => MENU_CALLBACK,
+      'file' => 'includes/sideshare.admin.inc',
   );
   return $items;
 }
@@ -55,6 +111,20 @@ function sideshare_permission() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function sideshare_theme() {
+  return array(
+      'sideshare_buttons_list' => array(
+          'file' => 'includes/sideshare.admin.theme.inc',
+          'variables' => array(
+              'var' => ''
+          )
+      )
+  );
+}
+
+/**
  * Implements hook_init().
  */
 function sideshare_init() {
@@ -66,24 +136,17 @@ function sideshare_init() {
 }
 
 /**
- * Implements hook_theme().
- */
-// function sideshare_theme() {
-//
-// }
-
-/**
  * Implements hook_process().
  */
 function sideshare_preprocess_region(&$variables) {
   // Only load the assets while not in admin page.
-  if (!_pageAllow()) {
+  if (! _pageAllow()) {
     return;
   }
   // Choose the region.
   if ($variables['region'] == 'footer') {
-  	$embed_SideShare = '<div id="sideshare-floating-bar"></div>';
-  	$variables['content'] = $variables['content'] . $embed_SideShare;
+    $embed_SideShare = '<div id="sideshare-floating-bar"></div>';
+    $variables['content'] = $variables['content'] . $embed_SideShare;
   }
 }
 
@@ -96,8 +159,8 @@ function _pageAllow() {
     $node = menu_get_object();
     $node_type = $node->type;
     $ct = variable_get('sideshare_posts_' . $node_type . '_enabled', FALSE);
-    if (!$ct) {
-    	return false;
+    if (! $ct) {
+      return false;
     }
     return true;
   }

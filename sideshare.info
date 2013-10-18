@@ -1,3 +1,6 @@
 name = SideShare
 description = "Provides a sidebar for social media sharing icons."
+package = Widget
 core = 7.x
+dependencies[] = file
+configure = admin/config/sideshare
