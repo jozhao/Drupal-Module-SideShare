@@ -12,7 +12,7 @@ module_load_include('inc', 'sideshare', 'includes/sideshare.admin.form');
  * Form builder: Configure the sideshare system.
  */
 function _sideshare_settings() {
-  $form = _subform_sideshare_buttons();
+  $form = array();
   $form = array_merge($form, _subform_sideshare_display());
   
   // Customize.

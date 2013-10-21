@@ -36,6 +36,11 @@ function _subform_sideshare_display() {
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
   );
+  $form['sideshare_display']['sideshare_display_pages_enabled'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Automatically add to all pages except content pages.'),
+      '#default_value' => variable_get('sideshare_display_pages_enabled', TRUE),
+  );
   $form['sideshare_display']['nodetypes'] = array(
       '#type' => 'fieldset',
       '#title' => t('Content Types'),
@@ -46,12 +51,12 @@ function _subform_sideshare_display() {
   $node_names = node_type_get_names();
   if (is_array($node_names) && count($node_names)) {
     foreach ( $node_names as $key => $value ) {
-      $form['sideshare_display']['nodetypes']['sideshare_posts_' . $node_types[$key]->type . '_enabled'] = array(
+      $form['sideshare_display']['nodetypes']['sideshare_display_' . $node_types[$key]->type . '_enabled'] = array(
           '#type' => 'checkbox',
           '#title' => t('Automatically add sideshare to content type @value (only affects content type @value)', array(
               '@value' => $value,
           )),
-          '#default_value' => variable_get('sideshare_posts_' . $node_types[$key]->type . '_enabled', TRUE),
+          '#default_value' => variable_get('sideshare_display_' . $node_types[$key]->type . '_enabled', TRUE),
       );
     }
   }

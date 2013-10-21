@@ -10,7 +10,7 @@
  *
  * @ingroup themeable
  */
-function theme_sideshare_buttons_list($variables = NULL) {
+function theme_sideshare_admin_buttons_list($variables = NULL) {
   $out = '';
   $out .= '<div>' . l(t('Add New Button'), 'admin/config/sideshare/buttons/add') . '</div>';
   $buttons = unserialize(variable_get('sideshare_buttons', _sideshare_buttons_default()));
