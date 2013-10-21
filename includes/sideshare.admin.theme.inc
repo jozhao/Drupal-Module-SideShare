@@ -13,28 +13,25 @@
 function theme_sideshare_buttons_list($variables = NULL) {
   $out = '';
   $out .= '<div>' . l(t('Add New Button'), 'admin/config/sideshare/buttons/add') . '</div>';
-  $buttons = unserialize(variable_get('sideshare_buttons', ''));
+  $buttons = unserialize(variable_get('sideshare_buttons', _sideshare_buttons_default()));
   if (is_array($buttons) && count($buttons)) {
-    usort($buttons, "sideshare_cmp_up");
+    usort($buttons, "_sideshare_cmp_up");
     foreach ( $buttons as $key => $value ) {
       $row = array();
       $row[] = array(
-          'data' => ($value->enabled ? t('Yes') : t('No')),
+          'data' => ($value->button_enabled ? t('Yes') : t('No'))
       );
       $row[] = array(
-          'data' => $value->name,
+          'data' => $value->button_name
       );
       $row[] = array(
-          'data' => $value->big_button,
+          'data' => _sideshare_display_button($value->button_icon, $value->button_name)
       );
       $row[] = array(
-          'data' => $value->small_button,
+          'data' => $value->button_weight
       );
       $row[] = array(
-          'data' => $value->weight,
-      );
-      $row[] = array(
-          'data' => l(t('Edit'), 'admin/config/sideshare/button/edit/' . $value->machine_name) . ' | ' . l(t('Delete'), 'admin/config/sideshare/button/del/' . $value->machine_name),
+          'data' => l(t('Edit'), 'admin/config/sideshare/button/edit/' . $value->button_machine_name) . ' | ' . l(t('Delete'), 'admin/config/sideshare/button/del/' . $value->button_machine_name)
       );
       $rows[] = $row;
     }
@@ -43,14 +40,13 @@ function theme_sideshare_buttons_list($variables = NULL) {
     $header = array(
         t('Enabled'),
         t('Name'),
-        t('Big Button'),
-        t('Small Button'),
+        t('Icon'),
         t('Weight'),
-        t('Actions'),
+        t('Actions')
     );
     $out .= theme('table', array(
         'header' => $header,
-        'rows' => $rows,
+        'rows' => $rows
     ));
   }
   else {

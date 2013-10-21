@@ -132,7 +132,7 @@ function _sideshare_button_add($form, &$form_state, $edit = array()) {
  * Submit handler for hook_addbutton().
  */
 function _sideshare_button_add_submit($form, &$form_state) {
-  $buttons = unserialize(variable_get('sideshare_buttons', ''));
+  $buttons = unserialize(variable_get('sideshare_buttons', _sideshare_buttons_default()));
   
   $buttons[$form_state['values']['button_machine_name']] = new stdClass();
   $buttons[$form_state['values']['button_machine_name']]->button_machine_name = $form_state['values']['button_machine_name'];
@@ -151,9 +151,9 @@ function _sideshare_button_add_submit($form, &$form_state) {
  * Callback to load existing machine name.
  */
 function sideshare_button_machine_name_load($name) {
-  $buttons = unserialize(variable_get('sharebar_buttons', ''));
+  $buttons = unserialize(variable_get('sharebar_buttons', _sideshare_buttons_default()));
   if (array_key_exists($name, $buttons)) {
-    $button[] = $buttons[$name]->machine_name;
+    $button[] = $buttons[$name]->button_machine_name;
     return reset($button);
   }
 }

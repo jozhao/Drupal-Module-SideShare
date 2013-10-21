@@ -150,6 +150,88 @@ function sideshare_preprocess_region(&$variables) {
   }
 }
 
+/*
+ * Provide default buttons.
+*/
+function _sideshare_buttons_default() {
+  $buttons = array();
+  
+  $button_fb = new stdClass();
+  $button_fb->button_name = 'Facebook';
+  $button_fb->button_machine_name = 'sideshare_facebook';
+  $button_fb->button_codes = '';
+  $button_fb->button_icon  = drupal_get_path('module', 'sideshare') . '/images/fb.png';
+  $button_fb->button_enabled = true;
+  $button_fb->button_weight = '0';
+  
+  $buttons[$button_fb->button_name] = $button_fb;
+  
+  $button_twitter = new stdClass();
+  $button_twitter->button_name = 'Twitter';
+  $button_twitter->button_machine_name = 'sideshare_twitter';
+  $button_twitter->button_codes = '';
+  $button_twitter->button_icon  = drupal_get_path('module', 'sideshare') . '/images/tw.png';
+  $button_twitter->button_enabled = true;
+  $button_twitter->button_weight = '1';
+  
+  $buttons[$button_twitter->button_name] = $button_twitter;
+  
+  $button_linkedin = new stdClass();
+  $button_linkedin->button_name = 'LinkedIn';
+  $button_linkedin->button_machine_name = 'sideshare_linkedin';
+  $button_linkedin->button_codes = '';
+  $button_linkedin->button_icon  = drupal_get_path('module', 'sideshare') . '/images/in.png';
+  $button_linkedin->button_enabled = true;
+  $button_linkedin->button_weight = '2';
+  
+  $buttons[$button_linkedin->button_name] = $button_linkedin;
+  
+  $button_gplus = new stdClass();
+  $button_gplus->button_name = 'Google Plus';
+  $button_gplus->button_machine_name = 'sideshare_gplus';
+  $button_gplus->button_codes = '';
+  $button_gplus->button_icon  = drupal_get_path('module', 'sideshare') . '/images/tw.png';
+  $button_gplus->button_enabled = true;
+  $button_gplus->button_weight = '3';
+  
+  $buttons[$button_gplus->button_name] = $button_gplus;
+  
+  return serialize($buttons);
+}
+
+/*
+ * Display button image.
+ */
+function _sideshare_display_button($img, $name) {
+  // Load the image.
+  if(file_load($img)) {
+    $image_path = file_load($img)->uri;
+  } else {
+    $image_path = $img;
+  }
+  
+  // For displaying the original image.
+  $image = theme('image', array('path' => $image_path, 'width' => '39', 'height' => '36', 'alt' => t($name)));
+  
+  // @todo: For displaying a styled image.
+  //$out = theme('image_style', array('path' => file_load($img->fid)->uri, 'alt' => t($img->title), 'style_name' => 'my_image_style'));
+  return $image;
+}
+
+/**
+ * Function to calculate higher weight & move up.
+ */
+function _sideshare_cmp_up($a, $b) {
+  return ($a->button_weight > $b->button_weight);
+}
+
+/**
+ * Function to calculate lower weight & move down.
+ */
+function _sideshare_cmp_down($a, $b) {
+  return ($a->button_weight < $b->button_weight);
+}
+
 /**
  * Helper return only if current page is for display.
  */
